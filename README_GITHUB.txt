@@ -27,4 +27,3 @@ Code.gs          = Salinan kode backend
 CATATAN:
 - Data guru dan absensi akan menggunakan Google Sheets setelah website memakai URL Apps Script di atas.
 - Untuk scanner kamera, akses kamera browser biasanya memerlukan HTTPS; GitHub Pages menyediakan HTTPS.
-
