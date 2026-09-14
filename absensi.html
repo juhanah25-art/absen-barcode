@@ -1,1 +1,37 @@
 
+<!doctype html><html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Absensi • SDN Cikampek Barat 2</title><link rel="stylesheet" href="css/style.css"></head><body data-page="absensi">
+<header class="topbar"><div class="top-left"><button class="menu-btn">☰</button><div><div class="head-title">ABSENSI GURU</div><div class="head-sub">Pindai QR / barcode untuk mencatat kehadiran</div></div></div><div class="clock"><span data-clock>00:00:00</span> WIB</div></header>
+<div class="body"><aside class="sidebar"><div class="school-brand"><div class="school-logos"><div class="school-logo">🏛️</div><div class="school-logo">🎓</div><div class="school-logo">🏫</div></div><div class="school-name">SDN CIKAMPEK BARAT 2</div><div class="school-tag">SISTEM ABSENSI DIGITAL</div></div><nav class="nav"><a href="index.html" data-page="dashboard">◕ <span>Dashboard</span></a><a href="guru.html" data-page="guru">👥 <span>Data Guru</span></a><a href="absensi.html" data-page="absensi">▦ <span>Absensi</span></a><a href="laporan.html" data-page="laporan">▤ <span>Laporan</span></a><a href="pengaturan.html" data-page="pengaturan">⚙ <span>Pengaturan</span></a></nav></aside>
+<main class="main"><div class="page-head"><div><h1>Pindai Absensi</h1><p>Gunakan kamera atau input ID guru secara manual.</p></div></div>
+<div class="scan-area"><div class="card"><h2 class="section-title">📷 Scanner</h2><div class="scanner-box"><video id="video" playsinline></video><div id="ph"><div class="scan-icon">📷</div><div class="scan-text">Tekan “Mulai Kamera” lalu arahkan ke barcode</div></div></div><div class="actions" style="margin-top:10px"><button class="btn btn-primary" id="start">▶ Mulai Kamera</button><button class="btn" id="stop">■ Stop</button><button class="btn" id="manual">⌨️ Input ID Manual</button></div><div class="notice" style="margin-top:10px">Barcode pada kartu guru berisi ID, contoh <b>G001</b>. Jika browser belum mendukung pembacaan barcode otomatis, gunakan Input ID Manual.</div></div>
+<div class="card"><h2 class="section-title">✅ Hasil Absensi</h2><div id="result" class="result-box"><div class="result-big">🕘</div><p style="text-align:center;color:#69778c">Belum ada pemindaian.</p></div><div class="sep" style="height:1px;background:#e7edf4;margin:15px 0"></div><h3 style="font-size:14px">Kehadiran Hari Ini</h3><div class="kv"><div class="k">Tanggal</div><div id="d"></div><div class="k">Hadir</div><div id="h"></div><div class="k">Total Guru</div><div id="tt"></div></div></div></div>
+</main></div>
+<script src="js/app.js"></script><script>
+let stream=null,scanLoop=null;
+function updateSide(){document.getElementById("d").textContent=today();document.getElementById("h").textContent=new Set(attendanceToday().map(a=>a.id)).size;document.getElementById("tt").textContent=DB.teachers.length}
+function doAttendance(id){
+ id=id.trim().toUpperCase();const t=teacherById(id);if(!t)return alert("ID guru tidak ditemukan. Masukkan data guru terlebih dahulu.");
+ const d=today(),jam=nowTime();if(DB.attendance.some(a=>a.id===id&&a.tanggal===d))return alert(t.nama+" sudah melakukan absensi hari ini.");
+ const rec={tanggal:d,jam,id:t.id,nama:t.nama,status:"Hadir"};
+ DB.attendance=[...DB.attendance,rec];
+ postToGoogle({action:"absen",idGuru:t.id}).then(r=>{
+   if(r && r.success===false) console.warn("Online:",r.message);
+ });
+ document.getElementById("result").className="result-box success-box";document.getElementById("result").innerHTML=`<div class="result-big">✅</div><div class="kv"><div class="k">Nama</div><div><b>${esc(t.nama)}</b></div><div class="k">ID</div><div>${esc(t.id)}</div><div class="k">Tanggal</div><div>${d}</div><div class="k">Jam</div><div>${jam}</div><div class="k">Status</div><div><span class="badge hadir">HADIR</span></div></div>`;
+ updateSide();
+}
+document.getElementById("manual").onclick=()=>{const id=prompt("Masukkan ID Guru, contoh G001");if(id)doAttendance(id)}
+document.getElementById("start").onclick=async()=>{
+ if(!navigator.mediaDevices?.getUserMedia)return alert("Browser tidak mendukung kamera.");
+ if(stream)return;
+ try{
+  stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:{ideal:"environment"}},audio:false});
+  const v=document.getElementById("video");v.srcObject=stream;v.style.display="block";document.getElementById("ph").style.display="none";await v.play();
+  if("BarcodeDetector" in window){const det=new BarcodeDetector({formats:["code_128","code_39","ean_13","ean_8","qr_code"]});const f=async()=>{if(!stream)return;try{const c=await det.detect(v);if(c.length&&c[0].rawValue){stop();doAttendance(c[0].rawValue)}}catch(e){}scanLoop=requestAnimationFrame(f)};f()}
+  else alert("Kamera aktif. Browser ini belum mendukung pembacaan barcode otomatis. Gunakan Input ID Manual.");
+ }catch(e){alert("Kamera gagal dibuka. Pastikan izin kamera diberikan.")}
+}
+function stop(){if(stream){stream.getTracks().forEach(t=>t.stop());stream=null}const v=document.getElementById("video");v.srcObject=null;v.style.display="none";document.getElementById("ph").style.display="block"}
+document.getElementById("stop").onclick=stop;updateSide();
+</script></body></html>
+
