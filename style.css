@@ -37,4 +37,3 @@ button{cursor:pointer}
 .modal{position:fixed;inset:0;background:rgba(18,28,48,.6);display:flex;align-items:center;justify-content:center;padding:18px;z-index:30}.modal.hidden{display:none}.modal-box{width:min(520px,95vw);background:#fff;border-radius:18px;padding:20px;box-shadow:0 25px 70px rgba(0,0,0,.25)}
 @media(max-width:1100px){.grid-4{grid-template-columns:repeat(2,1fr)}.two-col{grid-template-columns:1fr}.scan-area{grid-template-columns:1fr}.qr-grid{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:780px){.sidebar{position:fixed;top:74px;bottom:0;left:-320px;z-index:20;transition:.2s}.sidebar.open{left:0}.main{padding:18px}.grid-4{grid-template-columns:1fr}.topbar{padding-right:10px}.report-filters{grid-template-columns:1fr}.form-grid{grid-template-columns:1fr}.qr-grid{grid-template-columns:1fr}.head-title{font-size:17px}.head-sub{font-size:10px}.school-brand{padding-top:15px}}
-
