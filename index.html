@@ -1,1 +1,39 @@
 
+<!doctype html><html lang="id"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Dashboard Absensi • SDN Cikampek Barat 2</title><link rel="stylesheet" href="css/style.css">
+</head><body data-page="dashboard">
+<header class="topbar"><div class="top-left"><button class="menu-btn">☰</button><div><div class="head-title">DASHBOARD OVERVIEW</div><div class="head-sub">Absensi Digital SDN Cikampek Barat 2</div></div></div><div class="clock"><span data-clock>00:00:00</span> WIB</div></header>
+<div class="body">
+<aside class="sidebar"><div class="school-brand"><div class="school-logos"><div class="school-logo">🏛️</div><div class="school-logo">🎓</div><div class="school-logo">🏫</div></div><div class="school-name">SDN CIKAMPEK BARAT 2</div><div class="school-tag">SISTEM ABSENSI DIGITAL</div></div>
+<nav class="nav">
+<a href="index.html" data-page="dashboard">◕ <span>Dashboard</span></a>
+<a href="guru.html" data-page="guru">👥 <span>Data Guru</span></a>
+<a href="absensi.html" data-page="absensi">▦ <span>Absensi</span></a>
+<a href="laporan.html" data-page="laporan">▤ <span>Laporan</span></a>
+<a href="pengaturan.html" data-page="pengaturan">⚙ <span>Pengaturan</span></a>
+</nav></aside>
+<main class="main">
+<div class="page-head"><div><h1>Dashboard Overview</h1><p>Ringkasan kehadiran guru hari ini • <span data-date></span></p></div><a class="btn btn-primary" href="absensi.html">📷 Pindai Absen</a></div>
+<div class="grid-4">
+<div class="stat-card" style="--accent:#3478f6"><div class="label">TOTAL GURU</div><div class="value" id="total">0</div></div>
+<div class="stat-card" style="--accent:#11b889"><div class="label">HADIR HARI INI</div><div class="value" id="hadir">0</div></div>
+<div class="stat-card" style="--accent:#f59e0b"><div class="label">IZIN / SAKIT</div><div class="value" id="izin">0</div></div>
+<div class="stat-card" style="--accent:#ef4444"><div class="label">ALPHA</div><div class="value" id="alpha">0</div></div>
+</div>
+<div class="two-col">
+<div class="card"><h2 class="section-title">🕘 Kehadiran Terbaru</h2><div class="table-wrap"><table class="table"><thead><tr><th>Jam</th><th>ID</th><th>Nama Guru</th><th>Status</th></tr></thead><tbody id="recent"></tbody></table></div></div>
+<div class="card"><h2 class="section-title">⚡ Akses Cepat</h2><div class="actions"><a class="btn btn-primary" href="guru.html">👨‍🏫 Kelola Guru</a><a class="btn" href="laporan.html">📊 Buka Laporan</a><a class="btn" href="guru.html#qr">🪪 Kartu QR</a></div><div class="notice" style="margin-top:14px">Masukkan data guru di menu <b>Data Guru</b>. Setelah itu QR tiap guru bisa dibuat dan dicetak.</div></div>
+</div>
+</main></div>
+<script src="js/app.js"></script><script>
+function render(){
+ const t=DB.teachers,a=attendanceToday(),ids=new Set(a.map(x=>x.id));
+ document.getElementById("total").textContent=t.length;
+ document.getElementById("hadir").textContent=ids.size;
+ document.getElementById("izin").textContent=a.filter(x=>x.status==="Izin"||x.status==="Sakit").length;
+ document.getElementById("alpha").textContent=Math.max(t.length-ids.size,0);
+ document.getElementById("recent").innerHTML=a.slice().reverse().slice(0,9).map(x=>`<tr><td>${esc(x.jam)}</td><td>${esc(x.id)}</td><td>${esc(x.nama)}</td><td><span class="badge ${x.status.toLowerCase()}">${esc(x.status)}</span></td></tr>`).join("")||'<tr><td colspan="4" class="empty">Belum ada absensi hari ini.</td></tr>';
+}
+render();</script></body></html>
+
