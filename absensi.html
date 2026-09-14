@@ -34,4 +34,3 @@ document.getElementById("start").onclick=async()=>{
 function stop(){if(stream){stream.getTracks().forEach(t=>t.stop());stream=null}const v=document.getElementById("video");v.srcObject=null;v.style.display="none";document.getElementById("ph").style.display="block"}
 document.getElementById("stop").onclick=stop;updateSide();
 </script></body></html>
-
