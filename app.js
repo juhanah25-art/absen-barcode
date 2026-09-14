@@ -59,4 +59,3 @@ function downloadCSV(filename,rows){
   const u=URL.createObjectURL(new Blob([csv],{type:"text/csv;charset=utf-8"})),a=document.createElement("a");
   a.href=u;a.download=filename;a.click();URL.revokeObjectURL(u);
 }
-
